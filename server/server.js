@@ -13,7 +13,12 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors()); // Enable CORS
+app.use(cors({
+    origin: '*',  // Allow requests from all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization']  // Specify allowed headers
+}));
+
 app.use(express.json());
 
 // MongoDB connection using URI from environment variables
@@ -33,7 +38,7 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 // Cron job to send reminders
-cron.schedule('0 9 * * *', async () => {  // Runs every minute for testing
+cron.schedule('0 9 * * *', async () => {  // Runs everyday 9AM 
     try {
         const todos = await Todo.find({ deadline: { $lte: new Date() }, completed: false }).populate('user');
         todos.forEach(async (todo) => {
@@ -43,9 +48,6 @@ cron.schedule('0 9 * * *', async () => {  // Runs every minute for testing
         console.error('Error sending reminders:', err);
     }
 });
-
-
-
 
 // Function to send email
 const sendEmail = async (todo) => {

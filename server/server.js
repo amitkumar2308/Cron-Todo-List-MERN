@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import nodemailer from 'nodemailer';
-import cron from 'node-cron';
+import cron from 'node-cron'; // Keep this import in case you decide to re-enable it later
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
 import todoRoutes from './routes/todos.js';
@@ -33,23 +33,20 @@ mongoose.connect(process.env.MONGODB_URI, {
 app.use('/auth', authRoutes);
 app.use('/todos', todoRoutes);
 
-// Start server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
+// Commented out the cron job to prevent it from running in the serverless environment
 // Cron job to send reminders
-cron.schedule('0 9 * * *', async () => {  // Runs everyday 9AM 
-    try {
-        const todos = await Todo.find({ deadline: { $lte: new Date() }, completed: false }).populate('user');
-        todos.forEach(async (todo) => {
-            await sendEmail(todo);
-        });
-    } catch (err) {
-        console.error('Error sending reminders:', err);
-    }
-});
+// cron.schedule('0 9 * * *', async () => {  // Runs everyday 9AM 
+//     try {
+//         const todos = await Todo.find({ deadline: { $lte: new Date() }, completed: false }).populate('user');
+//         todos.forEach(async (todo) => {
+//             await sendEmail(todo);
+//         });
+//     } catch (err) {
+//         console.error('Error sending reminders:', err);
+//     }
+// });
 
-// Function to send email
+// Function to send email (kept in case you want to use it in another way)
 const sendEmail = async (todo) => {
     const transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -68,3 +65,7 @@ const sendEmail = async (todo) => {
 
     await transporter.sendMail(mailOptions);
 };
+
+// Start server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

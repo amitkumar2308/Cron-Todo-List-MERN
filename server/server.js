@@ -14,10 +14,13 @@ const app = express();
 
 // Middleware
 app.use(cors({
-    origin: '*',  // Allow requests from any origin
-    methods: ["GET", "POST", "PUT", "DELETE"],  // Allow these methods
-    allowedHeaders: ["Content-Type", "Authorization"],  // Allow these headers
+    origin: 'https://crontodo.vercel.app', // Restrict to your specific frontend domain
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+    credentials: true, // Include cookies and HTTP authentication with requests
 }));
+
+app.options('*', cors()); // Handle preflight requests
 
 app.use(express.json());
 

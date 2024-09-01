@@ -17,7 +17,7 @@ const sendResetEmail = async (email, token) => {
         },
     });
 
-    const resetURL = `http://localhost:3000/reset/${token}`;
+    const resetURL = `https://crontodo.vercel.app/reset/${token}`;
     const mailOptions = {
         from: 'password-reset@yourapp.com',
         to: email,
